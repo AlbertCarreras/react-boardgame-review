@@ -2,11 +2,24 @@ import React, { Component } from 'react';
 import GenreDropdown from './GenreDropdown';
 
 export default class GameForm extends Component {
-  state = {
-    name: "",
-    genre: {
-      id: "",
+  constructor(props) {
+    super(props);
+
+    this.state = {
       name: "",
+      genre: {
+        id: "",
+        name: "",
+      }
+    }
+  }
+
+  componentWillReceiveProps(props) {
+    // console.log(props);
+    if (this.state.genre.id === "") {
+      this.setState({
+        genre: props.genres[0]
+      })
     }
   }
 
@@ -15,16 +28,30 @@ export default class GameForm extends Component {
     this.setState({ genre });
   }
 
+  handleNameChange = (event) => {
+    this.setState({
+      name: event.target.value,
+    })
+  }
+
+  handleSubmit = (event) => {
+    event.preventDefault();
+
+    this.props.createGame(this.state);
+  }
+
   render() {
     return (
       <div className="gameform">
-        <form className="create">
+        <form className="create" onSubmit={this.handleSubmit}>
           <label>
             Name:
             <input
               type="text"
               name="name"
               placeholder="Filter board games by name"
+              value={this.state.name}
+              onChange={this.handleNameChange}
             />
           </label>
           <GenreDropdown
